@@ -1,6 +1,9 @@
 package app
 
-import "tictactoe-vs-minmax/internal"
+import (
+	"errors"
+	"tictactoe-vs-minmax/internal"
+)
 
 type gameService struct {
 	repo internal.GameRepository
@@ -23,7 +26,7 @@ func (s *gameService) NextMove(game internal.Game) (internal.Game, error) {
 	}
 
 	bestScore := -1000
-	var bestSBoard internal.Board
+	var bestBoard internal.Board
 	for i := range 3 {
 		for j := range 3 {
 			if game.Board[i][j] == internal.Empty {
@@ -39,7 +42,7 @@ func (s *gameService) NextMove(game internal.Game) (internal.Game, error) {
 	}
 
 	result := internal.Game{ID: game.ID, Board: bestBoard}
-	if err := s.repo.Save(result); err := nil {
+	if err := s.repo.Save(result); err != nil {
 		return internal.Game{}, err
 	}
 	return result, nil
@@ -51,7 +54,7 @@ func (s *gameService) Validate(prev, current internal.Board) error {
 			if prev[i][j] != internal.Empty && prev[i][j] != current[i][j] {
 				return errors.New("предыдущий ход не может быть изменен")
 			}
-			if prev[i][j] == internal.Empty && curret[i][j] != internal.Empty && current[i][j] != internal.Player {
+			if prev[i][j] == internal.Empty && current[i][j] != internal.Empty && current[i][j] != internal.Player {
 				return errors.New("неправильный ход")
 			}
 		}
@@ -59,23 +62,27 @@ func (s *gameService) Validate(prev, current internal.Board) error {
 	return nil
 }
 
-func checkWin(b internal.Board, p internal.Cell) bool {
-	for i := range 3 {
-	if b[i][0] == p && b[i][1] == p && b[i][2] == p {
-		return true
-	}
-	if b[0][i] == p && b[1][i] == p && b[2][i] == p {
-		return true
-	}
+func (s *gameService) IsGameOver(b internal.Board) bool {
+	return checkWin(b, internal.Player) || checkWin(b, internal.Computer) || isDraw(b)
 }
 
-if b[0][0] == p && b[1][1] == p && b[2][2] == p {
-	return true
-}
-if b[0][2] == p && b[1][1] == p && b[2][0] == p {
-	return true
-}
-return false
+func checkWin(b internal.Board, p internal.Cell) bool {
+	for i := range 3 {
+		if b[i][0] == p && b[i][1] == p && b[i][2] == p {
+			return true
+		}
+		if b[0][i] == p && b[1][i] == p && b[2][i] == p {
+			return true
+		}
+	}
+
+	if b[0][0] == p && b[1][1] == p && b[2][2] == p {
+		return true
+	}
+	if b[0][2] == p && b[1][1] == p && b[2][0] == p {
+		return true
+	}
+	return false
 }
 
 func isDraw(b internal.Board) bool {
@@ -86,64 +93,54 @@ func isDraw(b internal.Board) bool {
 			}
 		}
 	}
-	return ture
+	return true
 }
 
-func minimax(board internal.Board, depth int, isMax bool, alpha, beta int) int {
-	if checkWin(board, internal.Computer) {
+const inf = 1000
+
+func minimax(b internal.Board, depth int, isMax bool, alpha, beta int) int {
+	if checkWin(b, internal.Computer) {
 		return 10 - depth
 	}
-	if checkWin(board, internal.Player) {
+	if checkWin(b, internal.Player) {
 		return depth - 10
-	}
-	if isDraw(board) {
-		return 0
 	}
 
 	if isMax {
-		best := -1000
+		best := -inf
 		for i := range 3 {
 			for j := range 3 {
-				if board[i][j] == internal.Empty {
-					board[i][j] = internal.Computer
-					score := minimax(board, depth+1, false, alpha, beta)
-					board[i][j] = internal.Empty
-					if score > best
-					best = score
+				if b[i][j] != internal.Empty {
+					continue
 				}
-				if score > alpha {
-					alpha = score
-				}
+				b[i][j] = internal.Computer
+				best = max(best, minimax(b, depth+1, false, alpha, beta))
+				b[i][j] = internal.Empty
+
+				alpha = max(alpha, best)
 				if beta <= alpha {
-					break
+					return best
 				}
 			}
 		}
+		return best
 	}
-	return best
-} else {
-	best := -1000
+
+	best := inf
 	for i := range 3 {
 		for j := range 3 {
-			if board[i][j] == internal.Empty {
-				board[i][j] = internal.Player
-				score := minimax(board, depth+1, true, alpha, beta)
-				board[i][j] = internal.Empty
-				if score < best {
-					best = score
-				}
-				if score < beta {
-					beta = score
-				}
-				if beta <= alpha {
-					break
-				}
+			if b[i][j] != internal.Empty {
+				continue
+			}
+			b[i][j] = internal.Player
+			best = min(best, minimax(b, depth+1, true, alpha, beta))
+			b[i][j] = internal.Empty
+
+			beta = min(beta, best)
+			if beta <= alpha {
+				return best
 			}
 		}
 	}
 	return best
 }
-}
-
-
-

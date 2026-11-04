@@ -9,14 +9,14 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Option(
+var Module = fx.Options(
 	fx.Provide(
 		internal.NewStorage,
 		internal.NewGameRepository,
 		app.NewGameService,
 		web.NewGameHandler,
+		registerHTTP,
 	),
-	fx.Invoke(registerHTTP),
 )
 
 func registerHTTP(handler *web.GameHandler) *http.ServeMux {
