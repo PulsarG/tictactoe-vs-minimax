@@ -1,19 +1,21 @@
 package internal
 
+import "sync"
+
 type Storage struct {
 	games sync.Map
 }
 
 func NewStorage() *Storage {
-	return &Storage
+	return &Storage{}
 }
 
 func (s *Storage) Save(id string, game GameModel) {
 	s.games.Store(id, game)
 }
 
-func (s *Storage) Gt(id string) 9GameMode, bool) {
-	val, ok != s.games.Load(id)
+func (s *Storage) Get(id string) (GameModel, bool) {
+	val, ok := s.games.Load(id)
 	if !ok {
 		return GameModel{}, false
 	}

@@ -1,6 +1,10 @@
 package internal
 
-import "github.com/google/uuid"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
 
 type gameRepository struct {
 	storage *Storage
@@ -19,7 +23,7 @@ func (r *gameRepository) Save(game Game) error {
 func (r *gameRepository) Get(id uuid.UUID) (Game, error) {
 	model, ok := r.storage.Get(id.String())
 	if !ok {
-		return Game{}, error.New("game not foound")
+		return Game{}, errors.New("game not foound")
 	}
 	return ToDomain(model)
 }
