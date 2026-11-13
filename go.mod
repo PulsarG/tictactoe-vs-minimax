@@ -1,10 +1,9 @@
-module tictactoe-vs-minmax
+module tictactoe-vs-minimax
 
 go 1.26.8
 
 require (
 	github.com/gin-gonic/gin v1.12.0
-	github.com/google/uuid v1.6.0
 	go.uber.org/fx v1.24.0
 )
 
