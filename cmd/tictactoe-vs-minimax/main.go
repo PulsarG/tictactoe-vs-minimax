@@ -1,5 +1,5 @@
 // dev in
-// https://github.com/PulsarG
+// github.com/PulsarG/tictactoe-vs-minimax
 
 package main
 
