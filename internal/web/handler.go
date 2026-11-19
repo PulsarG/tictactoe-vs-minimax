@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"tictactoe-vs-minimax/internal/domain"
+
+	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
@@ -22,11 +25,21 @@ func NewRouter() *gin.Engine {
 }
 
 func (s *Server) RegisterRoutes(r *gin.Engine) {
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.POST("/game", s.createGameHandler)
 	r.POST("/game/:id", s.nextMoveHandler)
 	r.GET("/game/:id", s.getUserHandler)
 }
 
+// @Tags Game
+// @Summary      Create game
+// @Description  Creates a new game board
+// @Accept       json
+// @Produce      json
+// @Param        input body InputData true "Game board data"
+// @Success      201 {string} string "Created"
+// @Failure      400 {object} map[string]string
+// @Router       /game [post]
 func (s *Server) createGameHandler(c *gin.Context) {
 	var input InputData
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -60,6 +73,16 @@ func (s *Server) createGameHandler(c *gin.Context) {
 
 }
 
+// @Tags Game
+// @Summary      Next Move
+// @Description  Move Minimax
+// @Accept       json
+// @Produce      json
+// @Param        id     path      string      true  "ID игры"
+// @Param        input  body      InputData  true  "Состояние доски"
+// @Success      201 {string} string "Created"
+// @Failure      400 {object} map[string]string
+// @Router       /game/{id} [post]
 func (s *Server) nextMoveHandler(c *gin.Context) {
 	userID := c.Param("id")
 
@@ -110,6 +133,15 @@ func (s *Server) nextMoveHandler(c *gin.Context) {
 	printBoard(c, user.Board)
 }
 
+// @Tags Game
+// @Summary      Get Board
+// @Description  Show Board from id
+// @Accept       json
+// @Produce      json
+// @Param        id path string true  "ID игры"
+// @Success      201 {string} string "Created"
+// @Failure      400 {object} map[string]string
+// @Router       /game/{id} [get]
 func (s *Server) getUserHandler(c *gin.Context) {
 	userID := c.Param("id")
 

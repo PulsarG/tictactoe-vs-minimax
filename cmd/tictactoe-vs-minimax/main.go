@@ -6,6 +6,8 @@ package main
 import (
 	"tictactoe-vs-minimax/internal/di"
 
+	_ "tictactoe-vs-minimax/docs"
+
 	"go.uber.org/fx"
 )
 

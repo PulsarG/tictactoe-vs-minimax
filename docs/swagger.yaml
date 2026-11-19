@@ -1,0 +1,101 @@
+definitions:
+  web.InputData:
+    properties:
+      board:
+        items:
+          type: integer
+        type: array
+    required:
+    - board
+    type: object
+info:
+  contact: {}
+paths:
+  /game:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new game board
+      parameters:
+      - description: Game board data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/web.InputData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create game
+      tags:
+      - Game
+  /game/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Show Board from id
+      parameters:
+      - description: ID игры
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Board
+      tags:
+      - Game
+    post:
+      consumes:
+      - application/json
+      description: Move Minimax
+      parameters:
+      - description: ID игры
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Состояние доски
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/web.InputData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Next Move
+      tags:
+      - Game
+swagger: "2.0"

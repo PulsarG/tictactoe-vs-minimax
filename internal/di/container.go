@@ -10,8 +10,8 @@ import (
 	"tictactoe-vs-minimax/internal/domain"
 	"tictactoe-vs-minimax/internal/web"
 
-	"go.uber.org/fx"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/fx"
 )
 
 var Module = fx.Options(
