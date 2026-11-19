@@ -1,10 +1,11 @@
 package datasource
 
 import (
-	"strconv"
 	"sync"
 
 	"tictactoe-vs-minimax/internal/domain"
+
+	"github.com/google/uuid"
 )
 
 type ServerStorage struct {
@@ -24,7 +25,8 @@ func (m *ServerStorage) Create(board []int, status string) (domain.UserData, err
 	defer m.mu.Unlock()
 
 	m.lastID++
-	newID := strconv.Itoa(m.lastID)
+	// newID := strconv.Itoa(m.lastID)
+	newID := uuid.NewString()
 
 	boardCopy := make([]int, len(board))
 	copy(boardCopy, board)
