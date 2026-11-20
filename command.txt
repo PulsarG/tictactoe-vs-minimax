@@ -1,0 +1,8 @@
+Запустить докер
+sudo docker run --name pg-game -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=tictactoe -p 5433:5433 -d postgres:16
+
+если уже создана БД
+sudo docker start pg-game
+
+Отключить
+sudo docker stop pg-game

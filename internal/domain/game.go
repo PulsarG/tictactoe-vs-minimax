@@ -5,9 +5,9 @@ import "errors"
 var ErrNotFound = errors.New("запись не найдена")
 
 type UserData struct {
-	ID     string `json:"id"`
-	Board  []int  `json:"board"`
-	Status string `json:"status"`
+	ID     string `json:"id" db:"id"`
+	Board  []int  `json:"board" db:"board"`
+	Status string `json:"status" db:"status"`
 }
 
 type Storage interface {
